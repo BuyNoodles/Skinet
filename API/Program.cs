@@ -1,3 +1,5 @@
+using API;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var config = builder.Configuration;
 
-// Add services to the container.
-
+// Add services to the container. 
 services.AddControllers();
+services.AddScoped<IProductRepository, ProductRepository>();
 services.AddDbContext<StoreContext>(x => x.UseSqlite(
         config.GetConnectionString("DefaultConnection")));
 
@@ -17,6 +19,9 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Try to apply migrations
+await Migration.Migrate(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -32,3 +37,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
