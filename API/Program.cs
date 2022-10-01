@@ -1,8 +1,8 @@
-using API;
 using API.Extensions;
 using API.Helpers;
 using API.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -13,15 +13,22 @@ var config = builder.Configuration;
 // Add services to the container. 
 services.AddControllers();
 services.AddAutoMapper(typeof(MappingProfiles));
+
 services.AddDbContext<StoreContext>(x => x.UseSqlite(
         config.GetConnectionString("DefaultConnection")));
+
+services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlite(
+        config.GetConnectionString("IdentityConnection")));
+
 services.AddSingleton<IConnectionMultiplexer>(c =>
 {
     var configuration = ConfigurationOptions.Parse(
         config.GetConnectionString("Redis"), true);
     return ConnectionMultiplexer.Connect(configuration);
 });
+
 services.AddApplicationServices();
+services.AddIdentityServices(config);
 services.AddSwaggerDocumentation();
 services.AddCors(opt =>
 {
@@ -39,7 +46,7 @@ await Migration.Migrate(app);
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseStatusCodePagesWithReExecute("errors/{0}");
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 
@@ -48,6 +55,8 @@ app.UseRouting();
 app.UseStaticFiles();
 
 app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
