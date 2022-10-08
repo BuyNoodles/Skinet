@@ -8,11 +8,10 @@ namespace Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.OwnsOne(o => o.ShopToAddress, a =>
+            builder.OwnsOne(o => o.ShipToAddress, a =>
             {
                 a.WithOwner();
             });
-
             builder.Property(s => s.Status)
                 .HasConversion(
                     o => o.ToString(),
