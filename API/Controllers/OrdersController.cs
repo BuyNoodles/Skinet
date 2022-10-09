@@ -15,19 +15,17 @@ namespace API.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
-        private readonly ILogger<OrdersController> _logger;
-
-        public OrdersController(IOrderService orderService, IMapper mapper, ILogger<OrdersController> logger)
+        public OrdersController(IOrderService orderService, IMapper mapper)
         {
-            _orderService = orderService;
             _mapper = mapper;
-            _logger = logger;
+            _orderService = orderService;
         }
 
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
         {
-            var email = User.RetrieveEmailFromPrincipal();
+            var email = HttpContext.User.RetrieveEmailFromPrincipal();
+
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);
 
             var order = await _orderService.CreateOrderAsync(email, orderDto.DeliveryMethodId, orderDto.BasketId, address);
@@ -50,7 +48,8 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdForUser(int id)
         {
-            var email = User.RetrieveEmailFromPrincipal();
+            var email = HttpContext.User.RetrieveEmailFromPrincipal();
+
             var order = await _orderService.GetOrderByIdAsync(id, email);
 
             if (order == null) return NotFound(new ApiResponse(404));

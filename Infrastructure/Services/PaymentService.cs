@@ -49,7 +49,7 @@ namespace Infrastructure.Services
             var service = new PaymentIntentService();
             PaymentIntent intent;
 
-            if (string.IsNullOrEmpty(basket.PaymentItentId))
+            if (string.IsNullOrEmpty(basket.PaymentIntentId))
             {
                 var options = new PaymentIntentCreateOptions
                 {
@@ -59,7 +59,7 @@ namespace Infrastructure.Services
                 };
 
                 intent = await service.CreateAsync(options);
-                basket.PaymentItentId = intent.Id;
+                basket.PaymentIntentId = intent.Id;
                 basket.ClientSecret = intent.ClientSecret;
             }
             else
@@ -68,7 +68,7 @@ namespace Infrastructure.Services
                 {
                     Amount = (long)basket.Items.Sum(i => i.Quantity * (i.Price * 100)) + (long)shippingPrice * 100,
                 };
-                await service.UpdateAsync(basket.PaymentItentId, options);
+                await service.UpdateAsync(basket.PaymentIntentId, options);
             }
             await _basketRepository.UpdateBasketAsync(basket);
 

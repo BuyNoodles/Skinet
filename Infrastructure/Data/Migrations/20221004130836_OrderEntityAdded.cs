@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
@@ -13,11 +10,11 @@ namespace Infrastructure.Data.Migrations
                 name: "DeliveryMethods",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ShortName = table.Column<string>(type: "TEXT", nullable: true),
-                    DeliveryTime = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    ShortName = table.Column<string>(nullable: true),
+                    DeliveryTime = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     Price = table.Column<double>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -29,20 +26,20 @@ namespace Infrastructure.Data.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    BuyerEmail = table.Column<string>(type: "TEXT", nullable: true),
-                    OrderDate = table.Column<DateTimeOffset>(type: "TEXT", nullable: false),
-                    ShopToAddress_FirstName = table.Column<string>(type: "TEXT", nullable: true),
-                    ShopToAddress_LastName = table.Column<string>(type: "TEXT", nullable: true),
-                    ShopToAddress_Street = table.Column<string>(type: "TEXT", nullable: true),
-                    ShopToAddress_City = table.Column<string>(type: "TEXT", nullable: true),
-                    ShopToAddress_State = table.Column<string>(type: "TEXT", nullable: true),
-                    ShopToAddress_ZipCode = table.Column<string>(type: "TEXT", nullable: true),
-                    DeliveryMethodId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Subtotal = table.Column<double>(type: "REAL", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", nullable: false),
-                    PaymentIntentId = table.Column<string>(type: "TEXT", nullable: true)
+                    BuyerEmail = table.Column<string>(nullable: true),
+                    OrderDate = table.Column<long>(nullable: false),
+                    ShipToAddress_FirstName = table.Column<string>(nullable: true),
+                    ShipToAddress_LastName = table.Column<string>(nullable: true),
+                    ShipToAddress_Street = table.Column<string>(nullable: true),
+                    ShipToAddress_City = table.Column<string>(nullable: true),
+                    ShipToAddress_State = table.Column<string>(nullable: true),
+                    ShipToAddress_Zipcode = table.Column<string>(nullable: true),
+                    DeliveryMethodId = table.Column<int>(nullable: true),
+                    Subtotal = table.Column<double>(nullable: false),
+                    Status = table.Column<string>(nullable: false),
+                    PaymentIntentId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,21 +48,22 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_Orders_DeliveryMethods_DeliveryMethodId",
                         column: x => x.DeliveryMethodId,
                         principalTable: "DeliveryMethods",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ItemOrdered_ProductItemId = table.Column<int>(type: "INTEGER", nullable: true),
-                    ItemOrdered_ProductName = table.Column<string>(type: "TEXT", nullable: true),
-                    ItemOrdered_PictureUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    ItemOrdered_ProductItemId = table.Column<int>(nullable: true),
+                    ItemOrdered_ProductName = table.Column<string>(nullable: true),
+                    ItemOrdered_PictureUrl = table.Column<string>(nullable: true),
                     Price = table.Column<double>(type: "decimal(18,2)", nullable: false),
-                    Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    OrderId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Quantity = table.Column<int>(nullable: false),
+                    OrderId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
