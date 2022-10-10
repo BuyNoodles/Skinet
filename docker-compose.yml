@@ -13,11 +13,26 @@ services:
     environment:
       - REDIS_HOSTS=local:redis:6379
       - HTTP_USER=root
-      - HTTP_PASSWORD=secret
+      - HTTP_PASSWORD=root
     ports:
       - 8081:8081
     depends_on:
       - redis
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
     
 volumes:
   redis-data:

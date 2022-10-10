@@ -4,6 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<!--<Nullable>enable</Nullable>-->
 		<ImplicitUsings>enable</ImplicitUsings>
+		<EnableDefaultContentItems>false</EnableDefaultContentItems>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,11 +22,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="Content\**" CopyToOutputDirectory="PreserveNewest" />
 		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="wwwroot\images\" />
+		<Folder Include="Content\images\" />
+		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
 	<ProjectExtensions>

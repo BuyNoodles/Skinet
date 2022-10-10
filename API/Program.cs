@@ -4,6 +4,7 @@ using API.Middleware;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +15,10 @@ var config = builder.Configuration;
 services.AddControllers();
 services.AddAutoMapper(typeof(MappingProfiles));
 
-services.AddDbContext<StoreContext>(x => x.UseSqlite(
+services.AddDbContext<StoreContext>(x => x.UseNpgsql(
         config.GetConnectionString("DefaultConnection")));
 
-services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlite(
+services.AddDbContext<AppIdentityDbContext>(x => x.UseNpgsql(
         config.GetConnectionString("IdentityConnection")));
 
 services.AddSingleton<IConnectionMultiplexer>(c =>
@@ -40,6 +41,8 @@ services.AddCors(opt =>
 
 var app = builder.Build();
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 // Try to apply migrations
 await Migration.Migrate(app);
 
@@ -53,6 +56,12 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Content/")),
+    RequestPath = "/content"
+});
 
 app.UseCors("CorsPolicy");
 
@@ -62,7 +71,11 @@ app.UseAuthorization();
 
 app.UseSwaggerDocumentation();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapFallbackToController("Index", "Fallback");
+});
 
 app.Run();
 
